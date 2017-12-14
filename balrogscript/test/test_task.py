@@ -5,6 +5,9 @@ from balrogscript.test import config, nightly_config
 from balrogscript.task import (get_task, get_task_channel, get_task_server,
                                get_upstream_artifacts)
 
+assert nightly_config # silence pyflakes
+assert config # silence pyflakes
+
 
 def test_get_task_channel(nightly_config):
     task = get_task(nightly_config)
@@ -46,8 +49,3 @@ def test_get_task_server(nightly_config, scopes, expected, raises):
 def test_get_upstream_artifacts(nightly_config, expected):
     task = get_task(nightly_config)
     assert get_upstream_artifacts(task) == expected
-
-
-def test_get_manifest(nightly_config):
-    task = get_task(nightly_config)
-    pass

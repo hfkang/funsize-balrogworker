@@ -5,8 +5,8 @@ from balrogscript.test import config, nightly_config
 from balrogscript.task import (get_task, get_task_channel, get_task_server,
                                get_upstream_artifacts)
 
-assert nightly_config # silence pyflakes
-assert config # silence pyflakes
+assert nightly_config  # silence pyflakes
+assert config  # silence pyflakes
 
 
 def test_get_task_channel(nightly_config):

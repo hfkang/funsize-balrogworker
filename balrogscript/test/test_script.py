@@ -16,9 +16,9 @@ from balrog.submitter.cli import NightlySubmitterV4  # noqa: E402
 
 logging.basicConfig()
 
-assert nightly_config # silence pyflakes
-assert config # silence pyflakes
-assert nightly_manifest # silence pyflakes
+assert nightly_config  # silence pyflakes
+assert config  # silence pyflakes
+assert nightly_manifest  # silence pyflakes
 
 
 # get_task {{{1

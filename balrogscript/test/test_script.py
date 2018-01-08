@@ -10,7 +10,7 @@ import balrogscript.script as balrogscript
 from balrogscript.test import (nightly_manifest, config, nightly_config,
                                release_manifest, release_config)
 from balrogscript.task import (get_task, validate_task_schema, get_task_server)
-from balrogscript.script import setup_logging, main
+from balrogscript.script import setup_logging, main, setup_config
 
 sys.path.insert(0, os.path.join(
     os.path.dirname(__file__), "../tools/lib/python"
@@ -204,5 +204,24 @@ def test_main():
         assert e.type == SystemExit
         assert e.value.code == 2
 
+    with pytest.raises(SystemExit) as e:
+        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json.json')
+        assert e.type == SystemExit
+        assert e.value.code == 5
+
     with mock.patch('util.retry.retry', new=fake_retry):
         main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')
+
+
+def test_invalid_args():
+    args = ['only-one-arg']
+    with mock.patch.object(sys, 'argv', args):
+        with pytest.raises(SystemExit) as e:
+            setup_config(None)
+            assert e.type == SystemExit
+            assert e.value.code == 2
+
+    args = ['balrogscript', 'balrogscript/test/data/hardcoded_config.json']
+    with mock.patch.object(sys, 'argv', args):
+        config = setup_config(None)
+        assert config['artifact_dir'] == 'balrogscript/data/balrog_task_schema.json'

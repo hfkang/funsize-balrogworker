@@ -99,11 +99,8 @@ def load_config(path=None):
     try:
         with open(path) as fh:
             config = json.load(fh)
-    except (ValueError, OSError) as e:
+    except (ValueError, OSError, IOError) as e:
         print >> sys.stderr, "Can't read config file {}!\n{}".format(path, e)
-        sys.exit(5)
-    except KeyError as e:
-        print >> sys.stderr, "Usage: balrogscript CONFIG_FILE\n{}".format(e)
         sys.exit(5)
     return config
 

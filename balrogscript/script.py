@@ -132,7 +132,7 @@ def main(name=None, config_path=None):
     server = get_task_server(task, config)
     balrog_auth, config = update_config(config, server)
 
-    config['upstream_artifacts'] = get_upstream_artifacts(task)
+    upstream_artifacts = get_upstream_artifacts(task)
 
     # hacking the tools repo dependency by first reading its location from
     # the config file and only then loading the module from subdfolder
@@ -141,7 +141,7 @@ def main(name=None, config_path=None):
     from util.retry import retry  # noqa: E402
 
     # Read the manifest from disk
-    manifest = get_manifest(config)
+    manifest = get_manifest(config, upstream_artifacts)
 
     for e in manifest:
         # Get release metadata from manifest

@@ -38,10 +38,18 @@ def test_create_submitter_nightly_style(config, nightly_manifest):
     submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
     assert isinstance(submitter, NightlySubmitterV4)
 
+    nightly_manifest[0].pop("partialInfo", None)
+    submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    assert isinstance(submitter, NightlySubmitterV4)
+
 
 def test_create_submitter_release_style(config, release_manifest):
     balrog_auth = (None, None)
 
+    submitter, release = balrogscript.create_submitter(release_manifest[0], balrog_auth, config)
+    assert isinstance(submitter, ReleaseSubmitterV4)
+
+    release_manifest[0].pop("partialInfo", None)
     submitter, release = balrogscript.create_submitter(release_manifest[0], balrog_auth, config)
     assert isinstance(submitter, ReleaseSubmitterV4)
 

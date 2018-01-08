@@ -93,7 +93,6 @@ def setup_logging(verbose=False):
     logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s",
                         stream=sys.stdout,
                         level=log_level)
-    logging.getLogger("boto").setLevel(logging.WARNING)
 
 
 def load_config(path=None):

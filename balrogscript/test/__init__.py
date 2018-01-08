@@ -37,16 +37,19 @@ def config():
             "api_root": "BALROG_API_ROOT",
             "server_config": {
                 "nightly": {
+                    "api_root": "BALROG_API_ROOT",
                     "balrog_username": "BALROG_USERNAME",
                     "balrog_password": "BALROG_PASSWORD",
                     "allowed_channels": ["nightly"]
                 },
                 "release": {
+                    "api_root": "BALROG_API_ROOT",
                     "balrog_username": "BALROG_USERNAME",
                     "balrog_password": "BALROG_PASSWORD",
                     "allowed_channels": ["release", "release-localtest", "release-cdntest"]
                 },
                 "dep": {
+                    "api_root": "BALROG_API_ROOT",
                     "balrog_username": "BALROG_USERNAME",
                     "balrog_password": "BALROG_PASSWORD",
                     "allowed_channels": ["nightly", "release", "beta", "etc"]

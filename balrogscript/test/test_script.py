@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import mock
 import pytest
 import os
 import sys
-import balrogscript.script as balrogscript
 
+import balrogscript.script as balrogscript
 from balrogscript.test import (nightly_manifest, config, nightly_config,
                                release_manifest, release_config)
 from balrogscript.task import (get_task, validate_task_schema, get_task_server)
+from balrogscript.script import setup_logging, main
 
 sys.path.insert(0, os.path.join(
     os.path.dirname(__file__), "../tools/lib/python"
@@ -182,3 +184,20 @@ def test_verify_task_schema_missing_cert(config, defn):
 def test_get_task_server(config, defn):
     with pytest.raises(ValueError):
         get_task_server(defn, config)
+
+
+# setup_logging {{{1
+@pytest.mark.parametrize("verbose", (
+    True, False
+))
+def test_setup_logging(verbose):
+    setup_logging(verbose=verbose)
+    assert logging.getLogger().level == logging.NOTSET
+
+
+def test_main():
+    def fake_retry(action):
+        pass
+
+    with mock.patch('util.retry.retry', new=fake_retry):
+        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')

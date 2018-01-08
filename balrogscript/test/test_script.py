@@ -203,9 +203,26 @@ def test_setup_logging(verbose):
     assert logging.getLogger().level == logging.NOTSET
 
 
+def test_invalid_args():
+    args = ['only-one-arg']
+    with mock.patch.object(sys, 'argv', args):
+        with pytest.raises(SystemExit) as e:
+            setup_config(None)
+            assert e.type == SystemExit
+            assert e.value.code == 2
+
+    args = ['balrogscript', 'balrogscript/test/data/hardcoded_config.json']
+    with mock.patch.object(sys, 'argv', args):
+        config = setup_config(None)
+        assert config['artifact_dir'] == 'balrogscript/data/balrog_task_schema.json'
+
+
 def test_main():
     def fake_retry(action):
-        pass
+        return
+
+    def fake_get_manifest(config, upstream_artifacts):
+        return []
 
     with pytest.raises(SystemExit) as e:
         main(name='__main__')
@@ -220,16 +237,5 @@ def test_main():
     with mock.patch('util.retry.retry', new=fake_retry):
         main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')
 
-
-def test_invalid_args():
-    args = ['only-one-arg']
-    with mock.patch.object(sys, 'argv', args):
-        with pytest.raises(SystemExit) as e:
-            setup_config(None)
-            assert e.type == SystemExit
-            assert e.value.code == 2
-
-    args = ['balrogscript', 'balrogscript/test/data/hardcoded_config.json']
-    with mock.patch.object(sys, 'argv', args):
-        config = setup_config(None)
-        assert config['artifact_dir'] == 'balrogscript/data/balrog_task_schema.json'
+    with mock.patch('balrogscript.script.get_manifest', new=fake_get_manifest):
+        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')

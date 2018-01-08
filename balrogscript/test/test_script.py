@@ -199,5 +199,10 @@ def test_main():
     def fake_retry(action):
         pass
 
+    with pytest.raises(SystemExit) as e:
+        main(name='__main__')
+        assert e.type == SystemExit
+        assert e.value.code == 2
+
     with mock.patch('util.retry.retry', new=fake_retry):
         main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')

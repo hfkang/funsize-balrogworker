@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `IOError` as part of caught exceptions in `load_config` for file not found issues
 - in testing: release-type manifest, release-type tasks, release-type behaviors
-- 99% test coverage
+- 100% test coverage
 
 ### Changed
 - `upstream_artifacts` are no longer backed within the rest of configs because it's counter-intuitive. They lay separately in a variable now and play along with the `task` definition as it should be

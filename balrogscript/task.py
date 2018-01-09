@@ -60,6 +60,7 @@ def get_task_server(task, script_config):
 def get_manifest(script_config, upstream_artifacts):
     # assumes a single upstreamArtifact and single path
     task_id = upstream_artifacts[0]['taskId']
+    # FIXME: once we get rid of balrog_props.json, we should wipe the hardcode
     path = os.path.join(script_config['work_dir'], "cot",
                         task_id, upstream_artifacts[0]['paths'][0])
     log.info("Reading manifest file %s" % path)

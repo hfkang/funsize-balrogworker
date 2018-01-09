@@ -9,12 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - 100% test coverage
 
 ### Changed
-- `upstream_artifacts` are no longer backed within the rest of configs because it's counter-intuitive. They lay separately in a variable now and play along with the `task` definition as it should be
+- `upstream_artifacts` are no longer baked within the rest of `configs` because it's counter-intuitive. They lay separately in a variable now and play along with the `task` definition
 
 ### Fixed
 - `task.json` config is now up-to-date with the release-type changes.
 - `api_root` now lies within the server configurations rather than outside
-- release manifest up-to-date
+- release manifest sample in testing is now up-to-date
 
 ### Removed
 - `boto` logger as it is not used

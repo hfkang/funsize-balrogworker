@@ -6,7 +6,7 @@ import pytest
 import os
 import sys
 
-import balrogscript.script as balrogscript
+import balrogscript.script as bscript
 from balrogscript.test import (nightly_manifest, config, nightly_config,
                                release_manifest, release_config)
 from balrogscript.task import (get_task, validate_task_schema, get_task_server)
@@ -35,32 +35,32 @@ def test_get_task_payload(nightly_config):
 # create_submitter {{{1
 def test_create_submitter_nightly_style(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
     assert isinstance(submitter, NightlySubmitterV4)
 
     nightly_manifest[0].pop("partialInfo", None)
-    submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
     assert isinstance(submitter, NightlySubmitterV4)
 
 
 def test_create_submitter_release_style(config, release_manifest):
     balrog_auth = (None, None)
 
-    submitter, release = balrogscript.create_submitter(release_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
     assert isinstance(submitter, ReleaseSubmitterV4)
 
     release_manifest[0].pop("partialInfo", None)
-    submitter, release = balrogscript.create_submitter(release_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
     assert isinstance(submitter, ReleaseSubmitterV4)
 
     release_manifest[0].pop("tc_release", None)
     with pytest.raises(RuntimeError):
-        submitter, release = balrogscript.create_submitter(release_manifest[0], balrog_auth, config)
+        submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
 
 
 def test_create_submitter_nightly_metadata(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
 
     exp = {
         'platform': "android-api-15",
@@ -90,7 +90,7 @@ def test_create_submitter_nightly_metadata(config, nightly_manifest):
 
 def test_create_submitter_nightly_creates_valid_submitter(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = balrogscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
     lambda: submitter.run(**release)
 
 
@@ -200,7 +200,7 @@ def test_get_task_server(config, defn):
 ))
 def test_setup_logging(verbose):
     setup_logging(verbose=verbose)
-    assert logging.getLogger().level == logging.NOTSET
+    assert bscript.log.level == logging.NOTSET
 
 
 def test_invalid_args():

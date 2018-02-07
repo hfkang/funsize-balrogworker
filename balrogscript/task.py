@@ -7,6 +7,8 @@ import sys
 
 log = logging.getLogger(__name__)
 
+KNOWN_ACTIONS = ('submit', 'push', 'ship')
+
 
 def validate_task_schema(script_config, task_definition):
     """Perform a schema validation check against taks definition"""
@@ -37,6 +39,26 @@ def get_task_channel(task, script_config):
     # TODO to be implemented once balrogscript needs to handle rules munging
     # too
     raise NotImplementedError("This method has yet to be implemented")
+
+
+def get_task_action(task, script_config):
+    """Extract task server from scopes"""
+    actions = [
+        s.split(':')[-1] for s in task["scopes"] if
+        s.startswith("project:releng:balrog:action:")
+    ]
+    if actions:
+        log.info("actions: %s", actions)
+        if len(actions) != 1:
+            raise ValueError("Only one action can be used")
+        action = actions[0]
+    else:
+        action = 'submit'
+
+    if action not in KNOWN_ACTIONS:
+        raise ValueError("Invalid action scope")
+
+    return action
 
 
 def get_task_server(task, script_config):

@@ -7,7 +7,7 @@ import sys
 
 log = logging.getLogger(__name__)
 
-KNOWN_ACTIONS = ('submit', 'push', 'ship')
+KNOWN_ACTIONS = ('submit', 'push', 'schedule')
 
 
 def validate_task_schema(script_config, task_definition):

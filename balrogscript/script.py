@@ -81,12 +81,6 @@ def submit_release(task, config, balrog_auth):
     """Submit a release blob to balrog."""
     upstream_artifacts = get_upstream_artifacts(task)
 
-    # hacking the tools repo dependency by first reading its location from
-    # the config file and only then loading the module from subdfolder
-    sys.path.insert(0, os.path.join(config['tools_location'], 'lib/python'))
-    # Until we get rid of our tools dep, this import(s) will break flake8 E402
-    from util.retry import retry  # noqa: E402
-
     # Read the manifest from disk
     manifest = get_manifest(config, upstream_artifacts)
 
@@ -95,6 +89,78 @@ def submit_release(task, config, balrog_auth):
         submitter, release = create_submitter(e, balrog_auth, config)
         # Connect to balrog and submit the metadata
         retry(lambda: submitter.run(**release))
+
+
+# schedule_release {{{1
+def schedule_release(task, config, balrog_auth):
+    """Schedule a release to ship on balrog channel(s)"""
+
+    # credentials
+    # -----------
+    # api-root
+    # (credentials-file)
+    # username
+
+    # script_config.json
+    # ------------------
+    # verbose
+
+    # release_config / task defn
+    # --------------------------
+    # version
+    # product
+    # build-number
+
+    # unknown
+    # -------
+    # rules
+    # schedule-at
+    # background-rate
+    #     for _, channel_config in self.query_channel_configs():
+    #         self._submit_to_balrog(channel_config)
+
+    # def _submit_to_balrog(self, channel_config):
+    #     dirs = self.query_abs_dirs()
+    #     auth = os.path.join(os.getcwd(), self.config['credentials_file'])
+    #     cmd = [
+    #         sys.executable,
+    #         os.path.join(dirs["abs_tools_dir"],
+    #                      "scripts/build-promotion/balrog-release-shipper.py")]
+    #     cmd.extend([
+    #         "--api-root", self.config["balrog_api_root"],
+    #         "--credentials-file", auth,
+    #         "--username", self.config["balrog_username"],
+    #         "--version", self.config["version"],
+    #         "--product", self.config["product"],
+    #         "--build-number", str(self.config["build_number"]),
+    #         "--verbose",
+    #     ])
+    #     for r in channel_config["publish_rules"]:
+    #         cmd.extend(["--rules", str(r)])
+    #     if channel_config.get("schedule_asap"):
+    #         # RC releases going to the beta channel have no ETA set for the
+    #         # RC-to-beta push. The corresponding task is scheduled after we
+    #         # resolve the push-to-beta human decision task, so we can schedule
+    #         # it ASAP plus some additional 30m to avoid retry() to fail.
+    #         schedule_at = datetime.utcnow() + timedelta(minutes=30)
+    #         cmd.extend(["--schedule-at", schedule_at.isoformat()])
+    #     elif self.config.get("schedule_at"):
+    #         cmd.extend(["--schedule-at", self.config["schedule_at"]])
+    #     if self.config.get("background_rate"):
+    #         cmd.extend(["--background-rate", str(self.config["background_rate"])])
+
+    #     self.retry(lambda: self.run_command(cmd, halt_on_failure=True),
+    #                error_level=FATAL)
+
+    # from balrog.submitter.cli import ReleaseScheduler
+    # suffix = os.environ.get("BALROG_BLOB_SUFFIX")
+    # scheduler = ReleaseScheduler(api_root, auth, suffix=suffix)
+    # if args.backgroundRate:
+    #     scheduler.run(args.product_name.capitalize(), args.version,
+    #                   args.build_number, args.rule_ids, args.schedule_at, args.backgroundRate)
+    # else:
+    #     scheduler.run(args.product_name.capitalize(), args.version,
+    #                   args.build_number, args.rule_ids, args.schedule_at)
 
 
 # push_release {{{1
@@ -124,6 +190,8 @@ def push_release(task, config, balrog_auth):
     # product
     # platform
 
+    # unknown
+    # -------
     # channel
     # partial-update
     # download-domain
@@ -230,6 +298,43 @@ def push_release(task, config, balrog_auth):
 
     #     self.retry(lambda: self.run_command(cmd, halt_on_failure=True))
 
+    # from balrog.submitter.cli import ReleaseCreatorV4, ReleasePusher
+    # partials = {}
+    # if args.partial_updates:
+    #     for v in args.partial_updates:
+    #         version, build_number = v.split("build")
+    #         partials[version] = {"buildNumber": build_number}
+
+    # credentials = {}
+    # execfile(args.credentials_file, credentials)
+    # auth = (args.username, credentials['balrog_credentials'][args.username])
+    # suffix = os.environ.get("BALROG_BLOB_SUFFIX")
+    # creator = ReleaseCreatorV4(
+    #     args.api_root, auth, dummy=args.dummy, suffix=suffix,
+    #     complete_mar_filename_pattern=args.complete_mar_filename_pattern,
+    #     complete_mar_bouncer_product_pattern=args.complete_mar_bouncer_product_pattern)
+    # pusher = ReleasePusher(args.api_root, auth, dummy=args.dummy, suffix=suffix)
+
+    # creator.run(
+    #     appVersion=args.app_version,
+    #     productName=args.product.capitalize(),
+    #     version=args.version,
+    #     buildNumber=args.build_number,
+    #     updateChannels=args.channels,
+    #     ftpServer=args.archive_domain,
+    #     bouncerServer=args.download_domain,
+    #     enUSPlatforms=args.platforms,
+    #     hashFunction=args.hash_function,
+    #     openURL=args.open_url,
+    #     partialUpdates=partials,
+    #     requiresMirrors=args.requires_mirrors)
+
+    # pusher.run(
+    #     productName=args.product.capitalize(),
+    #     version=args.version,
+    #     build_number=args.build_number,
+    #     rule_ids=args.rules_to_update)
+
 
 # usage {{{1
 def usage():
@@ -296,11 +401,16 @@ def main(name=None, config_path=None):
     balrog_auth, config = update_config(config, server)
     action = get_task_action(task, config)
 
+    # hacking the tools repo dependency by first reading its location from
+    # the config file and only then loading the module from subdfolder
+    sys.path.insert(0, os.path.join(config['tools_location'], 'lib/python'))
+    # Until we get rid of our tools dep, this import(s) will break flake8 E402
+    from util.retry import retry  # noqa: E402
+
     if action == 'push':
         push_release(task, config, balrog_auth)
-    elif action == 'ship':
-        # XXX todo
-        raise NotImplementedError("Ship not implemented yet")
+    elif action == 'schedule':
+        schedule_release(task, config, balrog_auth)
     else:
         submit_release(task, config, balrog_auth)
 

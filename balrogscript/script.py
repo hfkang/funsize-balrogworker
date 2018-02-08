@@ -116,6 +116,24 @@ def schedule_release(task, config, balrog_auth):
     # rules
     # schedule-at
     # background-rate
+
+    # properties
+    # ----------
+    # "properties": {
+    #   "product": "firefox",
+    #   "build_number": 1,
+    #   "balrog_api_root": "https://balrog-admin.stage.mozaws.net/api",
+    #   "appVersion": "59.0",
+    #   "channels": "beta",
+    #   "version": "59.0b2",
+    #   "release_promotion": true,
+    #   "script_repo_revision": "733530b0789bdf1d296bda66b8703c46c1672d36",
+    #   "revision": "733530b0789bdf1d296bda66b8703c46c1672d36",
+    #   "release_eta": "2018-01-26T02:15:00+00:00",
+    #   "next_version": "59.0b3",
+    #   "repo_path": "projects/maple"
+    # },
+
     #     for _, channel_config in self.query_channel_configs():
     #         self._submit_to_balrog(channel_config)
 

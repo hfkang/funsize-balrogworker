@@ -78,6 +78,7 @@ def create_submitter(e, balrog_auth, config):
 
 # submit_release {{{1
 def submit_release(task, config, balrog_auth):
+    """Submit a release blob to balrog."""
     upstream_artifacts = get_upstream_artifacts(task)
 
     # hacking the tools repo dependency by first reading its location from
@@ -94,6 +95,140 @@ def submit_release(task, config, balrog_auth):
         submitter, release = create_submitter(e, balrog_auth, config)
         # Connect to balrog and submit the metadata
         retry(lambda: submitter.run(**release))
+
+
+# push_release {{{1
+def push_release(task, config, balrog_auth):
+    """Push a top-level release blob to balrog."""
+
+    # credentials:
+    # ------------
+    # api-root
+    # (credentials-file)
+    # username
+
+    # mozharness releases/updates_firefox_BRANCH.py:
+    # ----------------------------------------------
+    # requires-mirrors
+    # rules-to-update
+
+    # script_config.json
+    # ------------------
+    # dummy - do we want this per-task or per-instance?
+
+    # release_config / task defn
+    # --------------
+    # version
+    # app_version
+    # build_number
+    # product
+    # platform
+
+    # channel
+    # partial-update
+    # download-domain
+    # archive-domain
+    # open-url
+    # hash-function
+    # verbose
+    # complate-mar-filename-pattern
+    # complate-mar-bouncer-product-pattern
+
+    # channel_configs = [
+    #     (n, c) for n, c in self.config["update_channels"].items() if
+    #     n in self.config["channels"]
+    # ]
+
+    # "update_channels": {
+    # for beta
+    #     "beta": {
+    #         "version_regex": r"^(\d+\.\d+(b\d+)?)$",
+    #         "requires_mirrors": True,
+    #         "patcher_config": "mozBeta-branch-patcher2.cfg",
+    #         "update_verify_channel": "beta-localtest",
+    #         "mar_channel_ids": [],
+    #         "channel_names": ["beta", "beta-localtest", "beta-cdntest"],
+    #         "rules_to_update": ["firefox-beta-cdntest", "firefox-beta-localtest"],
+    #         "publish_rules": [32],
+    #     },
+    # for release
+    #     "beta": {
+    #         "version_regex": r"^(\d+\.\d+(b\d+)?)$",
+    #         "requires_mirrors": False,
+    #         "patcher_config": "mozBeta-branch-patcher2.cfg",
+    #         "update_verify_channel": "beta-localtest",
+    #         "mar_channel_ids": [
+    #             "firefox-mozilla-beta", "firefox-mozilla-release",
+    #         ],
+    #         "channel_names": ["beta", "beta-localtest", "beta-cdntest"],
+    #         "rules_to_update": ["firefox-beta-cdntest", "firefox-beta-localtest"],
+    #         "publish_rules": [32],
+    #         "schedule_asap": True,
+    #     },
+    #     "release": {
+    #         "version_regex": r"^\d+\.\d+(\.\d+)?$",
+    #         "requires_mirrors": True,
+    #         "patcher_config": "mozRelease-branch-patcher2.cfg",
+    #         "update_verify_channel": "release-localtest",
+    #         "mar_channel_ids": [],
+    #         "channel_names": ["release", "release-localtest", "release-cdntest"],
+    #         "rules_to_update": ["firefox-release-cdntest", "firefox-release-localtest"],
+    #         "publish_rules": [145],
+    #     },
+    # for devedition
+    #     "aurora": {
+    #         "version_regex": r"^.*$",
+    #         "requires_mirrors": True,
+    #         "patcher_config": "mozDevedition-branch-patcher2.cfg",
+    #         # Allow to override the patcher config product name, regardless
+    #         # the value set by buildbot properties
+    #         "patcher_config_product_override": "firefox",
+    #         "update_verify_channel": "aurora-localtest",
+    #         "mar_channel_ids": [],
+    #         "channel_names": ["aurora", "aurora-localtest", "aurora-cdntest"],
+    #         "rules_to_update": ["devedition-cdntest", "devedition-localtest"],
+    #         "publish_rules": [10],
+    #     },
+    # },
+
+    # for _, channel_config in self.query_channel_configs():
+    #     self._submit_to_balrog(channel_config)
+
+    # def _submit_to_balrog(self, channel_config):
+    #     dirs = self.query_abs_dirs()
+    #     auth = os.path.join(os.getcwd(), self.config['credentials_file'])
+    #     cmd = [
+    #         sys.executable,
+    #         os.path.join(dirs["abs_tools_dir"],
+    #                      "scripts/build-promotion/balrog-release-pusher.py")]
+    #     cmd.extend([
+    #         "--api-root", self.config["balrog_api_root"],
+    #         "--download-domain", self.config["download_domain"],
+    #         "--archive-domain", self.config["archive_domain"],
+    #         "--credentials-file", auth,
+    #         "--product", self.config["product"],
+    #         "--version", self.config["version"],
+    #         "--build-number", str(self.config["build_number"]),
+    #         "--app-version", self.config["appVersion"],
+    #         "--username", self.config["balrog_username"],
+    #         "--verbose",
+    #     ])
+    #     for c in channel_config["channel_names"]:
+    #         cmd.extend(["--channel", c])
+    #     for r in channel_config["rules_to_update"]:
+    #         cmd.extend(["--rule-to-update", r])
+    #     for p in self.config["platforms"]:
+    #         cmd.extend(["--platform", p])
+    #     for v, build_number in self.query_matching_partials(channel_config):
+    #         partial = "{version}build{build_number}".format(
+    #             version=v, build_number=build_number)
+    #         cmd.extend(["--partial-update", partial])
+    #     if channel_config["requires_mirrors"]:
+    #         cmd.append("--requires-mirrors")
+    #     if self.config["balrog_use_dummy_suffix"]:
+    #         cmd.append("--dummy")
+
+    #     self.retry(lambda: self.run_command(cmd, halt_on_failure=True))
 
 
 # usage {{{1
@@ -162,8 +297,7 @@ def main(name=None, config_path=None):
     action = get_task_action(task, config)
 
     if action == 'push':
-        # XXX todo
-        raise NotImplementedError("Push not implemented yet")
+        push_release(task, config, balrog_auth)
     elif action == 'ship':
         # XXX todo
         raise NotImplementedError("Ship not implemented yet")

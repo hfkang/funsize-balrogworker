@@ -8,12 +8,12 @@ import os
 import sys
 
 from balrogscript.task import (
-get_manifest,
-get_task,
-get_task_action,
-get_task_server,
-get_upstream_artifacts,
-validate_task_schema,
+    get_manifest,
+    get_task,
+    get_task_action,
+    get_task_server,
+    get_upstream_artifacts,
+    validate_task_schema,
 )
 
 
@@ -514,11 +514,11 @@ def main(config_path=None):
     setup_logging(config['verbose'])
 
     task = get_task(config)
-    validate_task_schema(config, task)
+    action = get_task_action(task, config)
+    validate_task_schema(config, task, action)
 
     server = get_task_server(task, config)
     balrog_auth, config = update_config(config, server)
-    action = get_task_action(task, config)
 
     # hacking the tools repo dependency by first reading its location from
     # the config file and only then loading the module from subdfolder

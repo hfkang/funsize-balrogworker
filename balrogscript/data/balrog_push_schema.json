@@ -5,9 +5,9 @@
         "payload": {
             "type": "object",
             "properties": {
-                "app_version": "string",
-                "archive_domain": "string",
-                "build_number": "int",
+                "app_version": {"type": "string"},
+                "archive_domain": {"type": "string"},
+                "build_number": {"type": "int"},
                 "channel_names": {
                     "type": "array",
                     "items": {
@@ -15,8 +15,8 @@
                     },
                     "uniqueItems": true
                 },
-                "download_domain": "string",
-                "partial_versions": "string",
+                "download_domain": {"type": "string"},
+                "partial_versions": {"type": "string"},
                 "platforms": {
                     "type": "array",
                     "items": {
@@ -24,8 +24,8 @@
                     },
                     "uniqueItems": true
                 },
-                "product": "string",
-                "require_mirrors": "bool",
+                "product": {"type": "string"},
+                "require_mirrors": {"type": "bool"},
                 "rules_to_update": {
                     "type": "array",
                     "items": {
@@ -33,7 +33,7 @@
                     },
                     "uniqueItems": true
                 },
-                "version": "string"
+                "version": {"type": "string"}
             },
             "required": ["app_version", "archive_domain", "build_number",
                          "channel_names", "download_domain", "partial_versions",

@@ -6,13 +6,6 @@
             "type": "object",
             "properties": {
                 "build_number": {"type": "int"},
-                "channel_names": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "uniqueItems": true
-                },
                 "product": {"type": "string"},
                 "publish_rules": {
                     "type": "array",
@@ -21,18 +14,9 @@
                     },
                     "uniqueItems": true
                 },
-                "release_eta": {"type": "string"},
-                "rules_to_update": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "uniqueItems": true
-                },
-                "version": {"type": "string"}
+                "release_eta": {"type": "string"}
             },
-            "required": ["build_number", "channel_names", "product",
-                         "publish_rules", "rules_to_update", "version"]
+            "required": ["build_number", "product", "publish_rules", "version"]
         },
         "scopes": {
             "type": "array",

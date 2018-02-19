@@ -33,8 +33,8 @@ def config():
             "artifact_dir": os.path.join(tmpdir, "artifact_dir"),
 
             "schema_files": {
-                "publish": "balrogscript/data/balrog_publish_schema.json",
-                "push": "balrogscript/data/balrog_push_schema.json",
+                "submit-locale": "balrogscript/data/balrog_submit-locale_schema.json",
+                "submit-toplevel": "balrogscript/data/balrog_submit-toplevel_schema.json",
                 "schedule": "balrogscript/data/balrog_schedule_schema.json",
             },
             "dummy": False,

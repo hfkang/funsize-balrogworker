@@ -7,7 +7,7 @@ import sys
 
 log = logging.getLogger(__name__)
 
-KNOWN_ACTIONS = ('submit', 'push', 'schedule')
+KNOWN_ACTIONS = ('submit-locale', 'submit-toplevel', 'schedule')
 
 
 def validate_task_schema(script_config, task_definition, action):
@@ -47,7 +47,7 @@ def get_task_action(task, script_config):
             raise ValueError("Only one action can be used")
         action = actions[0]
     else:
-        action = 'submit'
+        action = 'submit-locale'
 
     if action not in KNOWN_ACTIONS:
         raise ValueError("Invalid action scope")

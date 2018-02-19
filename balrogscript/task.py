@@ -35,13 +35,6 @@ def get_task(script_config):
     return task_definition
 
 
-def get_task_channel(task, script_config):
-    """Extract task channel from scopes"""
-    # TODO to be implemented once balrogscript needs to handle rules munging
-    # too
-    raise NotImplementedError("This method has yet to be implemented")
-
-
 def get_task_action(task, script_config):
     """Extract task server from scopes"""
     actions = [

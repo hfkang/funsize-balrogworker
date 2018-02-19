@@ -94,116 +94,19 @@ def submit_release(task, config, balrog_auth):
 # schedule_release {{{1
 def schedule_release(task, config, balrog_auth):
 """Schedule a release to ship on balrog channel(s)"""
-
-    # credentials
-    # -----------
-    # api-root
-    # (credentials-file)
-    # username
-
-    # script_config.json
-    # ------------------
-    # verbose
-
-    # release_config / task defn
-    # --------------------------
-    # version
-    # product
-    # build-number
-
-    # unknown
-    # -------
-    # rules
-    # schedule-at
-    # background-rate
-
-    # properties
-    # ----------
-    # "properties": {
-    #   "product": "firefox",
-    #   "build_number": 1,
-    #   "balrog_api_root": "https://balrog-admin.stage.mozaws.net/api",
-    #   "appVersion": "59.0",
-    #   "channels": "beta",
-    #   "version": "59.0b2",
-    #   "release_promotion": true,
-    #   "script_repo_revision": "733530b0789bdf1d296bda66b8703c46c1672d36",
-    #   "revision": "733530b0789bdf1d296bda66b8703c46c1672d36",
-    #   "release_eta": "2018-01-26T02:15:00+00:00",
-    #   "next_version": "59.0b3",
-    #   "repo_path": "projects/maple"
-    # },
-    # >'/builds/slave/rel-m-beta-fx_sc_p_in_balrog-0/build/tools/scripts/build-promotion/balrog-release-shipper.py'
-    # >'--api-root'
-    # >u'https://aus4-admin.mozilla.org/api'
-    # >'--credentials-file'
-    # >'/builds/slave/rel-m-beta-fx_sc_p_in_balrog-0/oauth.txt'
-    # >'--username'
-    # >'balrog-ffxbld'
-    # >'--version'
-    # >u'59.0b7'
-    # >'--product'
-    # >u'firefox'
-    # >'--build-number'
-    # >'1'
-    #
-    # Same as release-pusher
-    #
-    #
-    #
-    # >'--rules'
-    # >'32'
-    #
-    # Different by branch, and sometimes by staging vs prod - whatever is done for --rule-to-update for release-pusher should apply here.
-    #
-    # This script sometimes receives --schedule-at as well. This comes from ship it. The script also supports --background-rate, but I can't find any record of us using it in automation. If we ever did, it would likely come from Ship It.
-
-    #     for _, channel_config in self.query_channel_configs():
-    #         self._submit_to_balrog(channel_config)
-
-    # def _submit_to_balrog(self, channel_config):
-    #     dirs = self.query_abs_dirs()
-    #     auth = os.path.join(os.getcwd(), self.config['credentials_file'])
-    #     cmd = [
-    #         sys.executable,
-    #         os.path.join(dirs["abs_tools_dir"],
-    #                      "scripts/build-promotion/balrog-release-shipper.py")]
-    #     cmd.extend([
-    #         "--api-root", self.config["balrog_api_root"],
-    #         "--credentials-file", auth,
-    #         "--username", self.config["balrog_username"],
-    #         "--version", self.config["version"],
-    #         "--product", self.config["product"],
-    #         "--build-number", str(self.config["build_number"]),
-    #         "--verbose",
-    #     ])
-    #     for r in channel_config["publish_rules"]:
-    #         cmd.extend(["--rules", str(r)])
-    #     if channel_config.get("schedule_asap"):
-    #         # RC releases going to the beta channel have no ETA set for the
-    #         # RC-to-beta push. The corresponding task is scheduled after we
-    #         # resolve the push-to-beta human decision task, so we can schedule
-    #         # it ASAP plus some additional 30m to avoid retry() to fail.
-    #         schedule_at = datetime.utcnow() + timedelta(minutes=30)
-    #         cmd.extend(["--schedule-at", schedule_at.isoformat()])
-    #     elif self.config.get("schedule_at"):
-    #         cmd.extend(["--schedule-at", self.config["schedule_at"]])
-    #     if self.config.get("background_rate"):
-    #         cmd.extend(["--background-rate", str(self.config["background_rate"])])
-
-    #     self.retry(lambda: self.run_command(cmd, halt_on_failure=True),
-    #                error_level=FATAL)
-
-    # from balrog.submitter.cli import ReleaseScheduler
-    # suffix = os.environ.get("BALROG_BLOB_SUFFIX")
-    # scheduler = ReleaseScheduler(api_root, auth, suffix=suffix)
-    # if args.backgroundRate:
-    #     scheduler.run(args.product_name.capitalize(), args.version,
-    #                   args.build_number, args.rule_ids, args.schedule_at, args.backgroundRate)
-    # else:
-    #     scheduler.run(args.product_name.capitalize(), args.version,
-    #                   args.build_number, args.rule_ids, args.schedule_at)
-    pass
+    from balrog.submitter.cli import ReleaseScheduler
+    auth = balrog_auth
+    scheduler = ReleaseScheduler(api_root=config['api_root'], auth=auth,
+                                 dummy=config['dummy'])
+    args = [
+        task['payload']['product'].capitalize(),
+        task['payload']['version'],
+        task['payload']['build_number'],
+        task['payload']['publish_rules'],
+        task['payload']['release_eta'],
+    ]
+    # XXX optionally append background_rate if/when we want to support it
+    scheduler.run(*args)
 
 
 # push_release {{{1

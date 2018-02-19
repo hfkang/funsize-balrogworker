@@ -106,7 +106,10 @@ def schedule_release(task, config, balrog_auth):
         task['payload']['release_eta'],
     ]
     # XXX optionally append background_rate if/when we want to support it
-    scheduler.run(*args)
+
+    # XXX should we catch requests.HTTPError and raise a scriptworker
+    # error? maybe not since balrogscript isn't py3
+    retry(lambda: scheduler.run(*args))
 
 
 # push_release {{{1

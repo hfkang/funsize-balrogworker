@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""Balrog script
-"""
+"""Balrog script"""
 from copy import deepcopy
 import json
 import logging
@@ -79,6 +78,7 @@ def create_locale_submitter(e, balrog_auth, config):
 # submit_locale {{{1
 def submit_locale(task, config, balrog_auth):
     """Submit a release blob to balrog."""
+    from util.retry import retry  # noqa: E402
     upstream_artifacts = get_upstream_artifacts(task)
 
     # Read the manifest from disk
@@ -93,8 +93,9 @@ def submit_locale(task, config, balrog_auth):
 
 # schedule {{{1
 def schedule(task, config, balrog_auth):
-"""Schedule a release to ship on balrog channel(s)"""
+    """Schedule a release to ship on balrog channel(s)"""
     from balrog.submitter.cli import ReleaseScheduler
+    from util.retry import retry  # noqa: E402
     auth = balrog_auth
     scheduler = ReleaseScheduler(api_root=config['api_root'], auth=auth,
                                  dummy=config['dummy'])
@@ -114,13 +115,14 @@ def schedule(task, config, balrog_auth):
 
 # submit_toplevel {{{1
 def submit_toplevel(task, config, balrog_auth):
-"""Push a top-level release blob to balrog."""
+    """Push a top-level release blob to balrog."""
     from balrog.submitter.cli import ReleaseCreatorV4, ReleasePusher
+    from util.retry import retry  # noqa: E402
     auth = balrog_auth
     partials = {}
     for v in task['payload'].get('partial_updates', '').split(','):
-         version, build_number = v.split("build")
-         partials[version] = {"buildNumber": build_number}
+        version, build_number = v.split("build")
+        partials[version] = {"buildNumber": build_number}
 
     # XXX set these?
     # we may be able to stay with None
@@ -130,8 +132,8 @@ def submit_toplevel(task, config, balrog_auth):
     creator = ReleaseCreatorV4(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
-        complete_mar_filename_pattern=args.complete_mar_filename_pattern,
-        complete_mar_bouncer_product_pattern=args.complete_mar_bouncer_product_pattern
+        complete_mar_filename_pattern=complete_mar_filename_pattern,
+        complete_mar_bouncer_product_pattern=complete_mar_bouncer_product_pattern
     )
     pusher = ReleasePusher(
         api_root=config['api_root'], auth=auth,
@@ -160,7 +162,7 @@ def submit_toplevel(task, config, balrog_auth):
         version=task['payload']['version'],
         build_number=task['payload']['build_number'],
         rule_ids=task['payload']['rules_to_update'],
-    )
+    ))
 
 
 # usage {{{1
@@ -185,8 +187,10 @@ def update_config(config, server='default'):
     config = deepcopy(config)
 
     config['api_root'] = config['server_config'][server]['api_root']
-    username, password = (config['server_config'][server]['balrog_username'],
-    config['server_config'][server]['balrog_password'])
+    username, password = (
+        config['server_config'][server]['balrog_username'],
+        config['server_config'][server]['balrog_password']
+    )
     del(config['server_config'])
     return (username, password), config
 
@@ -229,7 +233,6 @@ def main(config_path=None):
     # the config file and only then loading the module from subdfolder
     sys.path.insert(0, os.path.join(config['tools_location'], 'lib/python'))
     # Until we get rid of our tools dep, this import(s) will break flake8 E402
-    from util.retry import retry  # noqa: E402
 
     if action == 'submit-toplevel':
         submit_toplevel(task, config, balrog_auth)
@@ -239,4 +242,4 @@ def main(config_path=None):
         submit_locale(task, config, balrog_auth)
 
 
-__name__ == '__main__' && main()
+__name__ == '__main__' and main()

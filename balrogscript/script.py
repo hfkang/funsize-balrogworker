@@ -124,17 +124,16 @@ def submit_toplevel(task, config, balrog_auth):
         version, build_number = v.split("build")
         partials[version] = {"buildNumber": build_number}
 
-    # XXX set these?
-    # we may be able to stay with None
-    complete_mar_filename_pattern = None
-    complete_mar_bouncer_product_pattern = None
-    open_url = None  # WNP
+    # XXX WNP - support someday?
+    # currently we create and set these manually.
+    open_url = None
 
     creator = ReleaseCreatorV4(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
-        complete_mar_filename_pattern=complete_mar_filename_pattern,
-        complete_mar_bouncer_product_pattern=complete_mar_bouncer_product_pattern
+        # these are set for bz2, which we don't support.
+        complete_mar_filename_pattern=None,
+        complete_mar_bouncer_product_pattern=None,
     )
     pusher = ReleasePusher(
         api_root=config['api_root'], auth=auth,

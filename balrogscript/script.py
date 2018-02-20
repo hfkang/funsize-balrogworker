@@ -128,6 +128,7 @@ def submit_toplevel(task, config, balrog_auth):
     # we may be able to stay with None
     complete_mar_filename_pattern = None
     complete_mar_bouncer_product_pattern = None
+    open_url = None  # WNP
 
     creator = ReleaseCreatorV4(
         api_root=config['api_root'], auth=auth,
@@ -150,9 +151,7 @@ def submit_toplevel(task, config, balrog_auth):
         bouncerServer=task['payload']['download_domain'],
         enUSPlatforms=task['payload']['platforms'],
         hashFunction='sha512',
-        # XXX WNP url in the payload?
-        # openURL=task['payload']['open_url'],
-        openURL=None,
+        openURL=open_url,
         partialUpdates=partials,
         requiresMirrors=task['payload']['requires_mirrors'],
     ))

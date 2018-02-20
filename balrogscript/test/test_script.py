@@ -207,7 +207,7 @@ def test_setup_logging(verbose):
 
 
 # load_config {{{1
-def load_config():
+def test_load_config():
     config_path = os.path.join(BASE_DIR, 'data/hardcoded_config.json')
     assert bscript.load_config(config_path)['tools_location'] == '...'
     with pytest.raises(SystemExit):

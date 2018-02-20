@@ -25,7 +25,7 @@
                     "uniqueItems": true
                 },
                 "product": {"type": "string"},
-                "require_mirrors": {"type": "bool"},
+                "require_mirrors": {"type": "boolean"},
                 "rules_to_update": {
                     "type": "array",
                     "items": {

@@ -118,6 +118,10 @@ def test_release_get_manifest(release_config):
     {"scopes": ["project:releng:balrog:action:illegal"]},
     None,
     True
+), (
+    {"scopes": []},
+    'submit-locale',
+    False
 )))
 def test_get_task_action(task, expected, raises):
     if raises:

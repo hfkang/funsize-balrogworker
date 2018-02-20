@@ -25,6 +25,8 @@ assert config  # silence pyflakes
 assert nightly_manifest  # silence pyflakes
 assert release_manifest  # silence pyflakes
 
+BASE_DIR = os.path.dirname(__file__)
+
 
 # get_task {{{1
 def test_get_task_payload(nightly_config):
@@ -204,6 +206,14 @@ def test_setup_logging(verbose):
     assert bscript.log.level == logging.NOTSET
 
 
+# load_config {{{1
+def load_config():
+    config_path = os.path.join(BASE_DIR, 'data/hardcoded_config.json')
+    assert bscript.load_config(config_path)['tools_location'] == '...'
+    with pytest.raises(SystemExit):
+        bscript.load_config(os.path.join(BASE_DIR, "nonexistent.path"))
+
+
 # setup_config {{{1
 def test_invalid_args():
     args = ['only-one-arg']
@@ -229,10 +239,7 @@ def test_main_submit_locale(action, mocker):
     def fake_get_manifest(config, upstream_artifacts):
         return []
 
-    config_path = os.path.join(
-        os.path.dirname(__file__),
-        'data/hardcoded_config.json'
-    )
+    config_path = os.path.join(BASE_DIR, 'data/hardcoded_config.json')
 
     mocker.patch.object(bscript, "validate_task_schema")
     mocker.patch.object(bscript, "get_task_action", return_value=action)

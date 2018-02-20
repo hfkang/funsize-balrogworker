@@ -122,38 +122,45 @@ def submit_toplevel(task, config, balrog_auth):
          version, build_number = v.split("build")
          partials[version] = {"buildNumber": build_number}
 
+    # XXX set these?
+    # we may be able to stay with None
+    complete_mar_filename_pattern = None
+    complete_mar_bouncer_product_pattern = None
+
     creator = ReleaseCreatorV4(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
         complete_mar_filename_pattern=args.complete_mar_filename_pattern,
         complete_mar_bouncer_product_pattern=args.complete_mar_bouncer_product_pattern
     )
-    # XXX complete_mar_filename_pattern
-    # XXX complete_mar_bouncer_product_pattern
     pusher = ReleasePusher(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
     )
 
-    # creator.run(
-    #     appVersion=task['payload']['app_version'],
-    #     productName=task['payload']['product'].capitalize(),
-    #     version=task['payload']['version'],
-    #     buildNumber=task['payload']['build_number'],
-    #     updateChannels=task['payload']['channel_names'],
-    #     ftpServer=task['payload']['archive_domain'],
-    #     bouncerServer=task['payload']['download_domain'],
-    #     enUSPlatforms=task['payload']['platforms'],
-    #     hashFunction='sha512',
-    #     openURL=args.open_url,
-    #     partialUpdates=partials,
-    #     requiresMirrors=args.requires_mirrors)
+    retry(lambda: creator.run(
+        appVersion=task['payload']['app_version'],
+        productName=task['payload']['product'].capitalize(),
+        version=task['payload']['version'],
+        buildNumber=task['payload']['build_number'],
+        updateChannels=task['payload']['channel_names'],
+        ftpServer=task['payload']['archive_domain'],
+        bouncerServer=task['payload']['download_domain'],
+        enUSPlatforms=task['payload']['platforms'],
+        hashFunction='sha512',
+        # XXX WNP url in the payload?
+        # openURL=task['payload']['open_url'],
+        openURL=None,
+        partialUpdates=partials,
+        requiresMirrors=task['payload']['requires_mirrors'],
+    ))
 
-    # pusher.run(
-    #     productName=task['payload']['product'].capitalize(),
-    #     version=args.version,
-    #     build_number=args.build_number,
-    #     rule_ids=args.rules_to_update)
+    retry(lambda: pusher.run(
+        productName=task['payload']['product'].capitalize(),
+        version=task['payload']['version'],
+        build_number=task['payload']['build_number'],
+        rule_ids=task['payload']['rules_to_update'],
+    )
 
 
 # usage {{{1

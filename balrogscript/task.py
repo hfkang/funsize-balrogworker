@@ -5,9 +5,9 @@ import os
 import re
 import sys
 
-log = logging.getLogger(__name__)
+from balrogscript.constants import VALID_ACTIONS
 
-KNOWN_ACTIONS = ('submit-locale', 'submit-toplevel', 'schedule')
+log = logging.getLogger(__name__)
 
 
 def validate_task_schema(script_config, task_definition, action):
@@ -49,7 +49,7 @@ def get_task_action(task, script_config):
     else:
         action = 'submit-locale'
 
-    if action not in KNOWN_ACTIONS:
+    if action not in VALID_ACTIONS:
         raise ValueError("Invalid action scope")
 
     return action

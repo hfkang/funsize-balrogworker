@@ -1,8 +1,9 @@
 {
     "version": [
-        1,
-        1,
-        0
+        2,
+        0,
+        0,
+        "dev1"
     ],
-    "version_string": "1.1.0"
+    "version_string": "2.0.0.dev1"
 }

@@ -5,12 +5,12 @@
         "payload": {
             "type": "object",
             "properties": {
-                "build_number": {"type": "int"},
+                "build_number": {"type": "number"},
                 "product": {"type": "string"},
                 "publish_rules": {
                     "type": "array",
                     "items": {
-                        "type": "int"
+                        "type": "number"
                     },
                     "uniqueItems": true
                 },

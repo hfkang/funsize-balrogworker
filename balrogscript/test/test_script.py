@@ -139,6 +139,7 @@ def test_verify_task_schema_missing_cert(config, defn):
         validate_task_schema(config, defn, 'submit-locale')
 
 
+# get_task_server {{{1
 @pytest.mark.parametrize("defn", ({
     'dependencies': [u'blah'],
     'payload': {
@@ -203,6 +204,7 @@ def test_setup_logging(verbose):
     assert bscript.log.level == logging.NOTSET
 
 
+# setup_config {{{1
 def test_invalid_args():
     args = ['only-one-arg']
     with mock.patch.object(sys, 'argv', args):
@@ -217,6 +219,7 @@ def test_invalid_args():
         assert config['artifact_dir'] == 'balrogscript/data/balrog_task_schema.json'
 
 
+# main {{{1
 def test_main():
     def fake_retry(action):
         return

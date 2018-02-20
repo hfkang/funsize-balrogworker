@@ -7,7 +7,7 @@
             "properties": {
                 "app_version": {"type": "string"},
                 "archive_domain": {"type": "string"},
-                "build_number": {"type": "int"},
+                "build_number": {"type": "number"},
                 "channel_names": {
                     "type": "array",
                     "items": {

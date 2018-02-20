@@ -2,8 +2,13 @@
 import pytest
 
 from balrogscript.test import config, nightly_config, release_config
-from balrogscript.task import (get_task, get_task_server,
-                               get_upstream_artifacts, get_manifest)
+from balrogscript.task import (
+    get_manifest,
+    get_task,
+    get_task_action,
+    get_task_server,
+    get_upstream_artifacts,
+)
 
 assert nightly_config  # silence pyflakes
 assert release_config  # silece pyflakes
@@ -91,3 +96,32 @@ def test_release_get_manifest(release_config):
         get_manifest(release_config, upstream_artifacts)
         assert e.type == SystemExit
         assert e.value.code == 3
+
+
+@pytest.mark.parametrize("task,expected,raises", ((
+    {"scopes": ["project:releng:balrog:action:submit-locale"]},
+    "submit-locale",
+    False
+), (
+    {"scopes": ["project:releng:balrog:action:submit-toplevel"]},
+    "submit-toplevel",
+    False
+), (
+    {"scopes": ["project:releng:balrog:action:schedule"]},
+    "schedule",
+    False
+), (
+    {"scopes": ["project:releng:balrog:action:schedule", "project:releng:balrog:action:submit-locale"]},
+    None,
+    True
+), (
+    {"scopes": ["project:releng:balrog:action:illegal"]},
+    None,
+    True
+)))
+def test_get_task_action(task, expected, raises):
+    if raises:
+        with pytest.raises(ValueError):
+            get_task_action(task, {})
+    else:
+        assert get_task_action(task, {}) == expected

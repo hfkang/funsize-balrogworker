@@ -220,25 +220,24 @@ def test_invalid_args():
 
 
 # main {{{1
-def test_main():
-    def fake_retry(action):
-        return
+@pytest.mark.parametrize("action", ('submit-locale', 'submit-toplevel', 'schedule'))
+def test_main_submit_locale(action, mocker):
+
+    def fake_get_action(*args):
+        return action
 
     def fake_get_manifest(config, upstream_artifacts):
         return []
 
-    with pytest.raises(SystemExit) as e:
-        main()
-        assert e.type == SystemExit
-        assert e.value.code == 2
+    config_path = os.path.join(
+        os.path.dirname(__file__),
+        'data/hardcoded_config.json'
+    )
 
-    with pytest.raises(SystemExit) as e:
-        main(config_path='balrogscript/test/data/hardcoded_config.json.json')
-        assert e.type == SystemExit
-        assert e.value.code == 5
+    mocker.patch.object(bscript, "validate_task_schema")
+    mocker.patch.object(bscript, "get_task_action", return_value=action)
+    mocker.patch.object(bscript, "submit_toplevel")
+    mocker.patch.object(bscript, "submit_locale")
+    mocker.patch.object(bscript, "schedule")
 
-    with mock.patch('util.retry.retry', new=fake_retry):
-        main(config_path='balrogscript/test/data/hardcoded_config.json')
-
-    with mock.patch('balrogscript.script.get_manifest', new=fake_get_manifest):
-        main(config_path='balrogscript/test/data/hardcoded_config.json')
+    main(config_path=config_path)

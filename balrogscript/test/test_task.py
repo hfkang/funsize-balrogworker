@@ -2,18 +2,12 @@
 import pytest
 
 from balrogscript.test import config, nightly_config, release_config
-from balrogscript.task import (get_task, get_task_channel, get_task_server,
+from balrogscript.task import (get_task, get_task_server,
                                get_upstream_artifacts, get_manifest)
 
 assert nightly_config  # silence pyflakes
 assert release_config  # silece pyflakes
 assert config  # silence pyflakes
-
-
-def test_get_task_channel(nightly_config):
-    task = get_task(nightly_config)
-    with pytest.raises(NotImplementedError):
-        get_task_channel(task, nightly_config)
 
 
 @pytest.mark.parametrize("scopes,expected,raises", ((

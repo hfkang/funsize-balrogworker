@@ -32,35 +32,35 @@ def test_get_task_payload(nightly_config):
     assert upstream[0]['paths'][0] == 'public/manifest.json'
 
 
-# create_submitter {{{1
-def test_create_submitter_nightly_style(config, nightly_manifest):
+# create_locale_submitter {{{1
+def test_create_locale_submitter_nightly_style(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
     assert isinstance(submitter, NightlySubmitterV4)
 
     nightly_manifest[0].pop("partialInfo", None)
-    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
     assert isinstance(submitter, NightlySubmitterV4)
 
 
-def test_create_submitter_release_style(config, release_manifest):
+def test_create_locale_submitter_release_style(config, release_manifest):
     balrog_auth = (None, None)
 
-    submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(release_manifest[0], balrog_auth, config)
     assert isinstance(submitter, ReleaseSubmitterV4)
 
     release_manifest[0].pop("partialInfo", None)
-    submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(release_manifest[0], balrog_auth, config)
     assert isinstance(submitter, ReleaseSubmitterV4)
 
     release_manifest[0].pop("tc_release", None)
     with pytest.raises(RuntimeError):
-        submitter, release = bscript.create_submitter(release_manifest[0], balrog_auth, config)
+        submitter, release = bscript.create_locale_submitter(release_manifest[0], balrog_auth, config)
 
 
-def test_create_submitter_nightly_metadata(config, nightly_manifest):
+def test_create_locale_submitter_nightly_metadata(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
 
     exp = {
         'platform': "android-api-15",
@@ -88,9 +88,9 @@ def test_create_submitter_nightly_metadata(config, nightly_manifest):
     assert exp == release
 
 
-def test_create_submitter_nightly_creates_valid_submitter(config, nightly_manifest):
+def test_create_locale_submitter_nightly_creates_valid_submitter(config, nightly_manifest):
     balrog_auth = (None, None)
-    submitter, release = bscript.create_submitter(nightly_manifest[0], balrog_auth, config)
+    submitter, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
     lambda: submitter.run(**release)
 
 
@@ -107,7 +107,7 @@ def test_validate_task_schema(config):
             }],
         }
     }
-    validate_task_schema(config, test_taskdef)
+    validate_task_schema(config, test_taskdef, 'submit-locale')
 
 
 @pytest.mark.parametrize("defn", ({
@@ -136,7 +136,7 @@ def test_validate_task_schema(config):
 }))
 def test_verify_task_schema_missing_cert(config, defn):
     with pytest.raises(SystemExit):
-        validate_task_schema(config, defn)
+        validate_task_schema(config, defn, 'submit-locale')
 
 
 @pytest.mark.parametrize("defn", ({
@@ -225,17 +225,17 @@ def test_main():
         return []
 
     with pytest.raises(SystemExit) as e:
-        main(name='__main__')
+        main()
         assert e.type == SystemExit
         assert e.value.code == 2
 
     with pytest.raises(SystemExit) as e:
-        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json.json')
+        main(config_path='balrogscript/test/data/hardcoded_config.json.json')
         assert e.type == SystemExit
         assert e.value.code == 5
 
     with mock.patch('util.retry.retry', new=fake_retry):
-        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')
+        main(config_path='balrogscript/test/data/hardcoded_config.json')
 
     with mock.patch('balrogscript.script.get_manifest', new=fake_get_manifest):
-        main(name='__main__', config_path='balrogscript/test/data/hardcoded_config.json')
+        main(config_path='balrogscript/test/data/hardcoded_config.json')

@@ -218,7 +218,7 @@ def test_create_pusher(config):
             'channel_names': ['x', 'y'],
             'archive_domain': 'archive',
             'download_domain': 'download',
-            'partial_updates': '40build2, 50build4',
+            'partial_versions': '40build2, 50build4',
             'platforms': ['foo', 'bar'],
             'require_mirrors': True,
             'rules_to_update': [1],

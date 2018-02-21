@@ -96,6 +96,21 @@ def test_create_locale_submitter_nightly_creates_valid_submitter(config, nightly
     lambda: submitter.run(**release)
 
 
+# submit_locale {{{1
+def test_submit_locale(config, nightly_config, nightly_manifest, mocker):
+    balrog_auth = (None, None)
+    _, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
+
+    def fake_submitter(**kwargs):
+        assert kwargs == release
+
+    task = get_task(nightly_config)
+    m = mock.MagicMock()
+    m.run = fake_submitter
+    mocker.patch.object(bscript, "create_locale_submitter", return_value=(m, release))
+    bscript.submit_locale(task, config, balrog_auth)
+
+
 # validate_task_schema {{{1
 def test_validate_task_schema(config):
     test_taskdef = {

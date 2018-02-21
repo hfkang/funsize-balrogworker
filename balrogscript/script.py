@@ -122,6 +122,7 @@ def submit_toplevel(task, config, balrog_auth):
     partials = {}
     if task['payload'].get('partial_updates'):
         for v in task['payload']['partial_updates'].split(','):
+            v = v.strip()  # we have whitespace after the comma
             version, build_number = v.split("build")
             partials[version] = {"buildNumber": build_number}
 

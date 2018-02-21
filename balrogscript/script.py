@@ -120,7 +120,8 @@ def submit_toplevel(task, config, balrog_auth):
     from util.retry import retry  # noqa: E402
     auth = balrog_auth
     partials = {}
-    for v in task['payload'].get('partial_updates', '').split(','):
+    if task['payload'].get('partial_updates'):
+    for v in task['payload']['partial_updates'].split(','):
         version, build_number = v.split("build")
         partials[version] = {"buildNumber": build_number}
 

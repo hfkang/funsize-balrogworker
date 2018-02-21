@@ -184,7 +184,7 @@ def test_create_pusher(config):
             'archive_domain': 'archive',
             'download_domain': 'download',
             'platforms': ['foo', 'bar'],
-            'requires_mirrors': False,
+            'require_mirrors': False,
             'rules_to_update': [1],
         }
     },
@@ -220,7 +220,7 @@ def test_create_pusher(config):
             'download_domain': 'download',
             'partial_updates': '40build2, 50build4',
             'platforms': ['foo', 'bar'],
-            'requires_mirrors': True,
+            'require_mirrors': True,
             'rules_to_update': [1],
         }
     },

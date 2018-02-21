@@ -167,7 +167,7 @@ def submit_toplevel(task, config, balrog_auth):
         hashFunction='sha512',
         openURL=open_url,
         partialUpdates=partials,
-        requiresMirrors=task['payload']['requires_mirrors'],
+        requiresMirrors=task['payload']['require_mirrors'],
     ))
 
     retry(lambda: pusher.run(

@@ -15,7 +15,13 @@ from balrogscript.script import setup_logging, main, setup_config
 sys.path.insert(0, os.path.join(
     os.path.dirname(__file__), "../tools/lib/python"
 ))
-from balrog.submitter.cli import NightlySubmitterV4, ReleaseSubmitterV4  # noqa: E402
+from balrog.submitter.cli import (
+    NightlySubmitterV4,
+    ReleaseCreatorV4,
+    ReleasePusher,
+    ReleaseScheduler,
+    ReleaseSubmitterV4,
+)  # noqa: E402
 
 logging.basicConfig()
 
@@ -112,9 +118,16 @@ def test_submit_locale(config, nightly_config, nightly_manifest, mocker):
 
 
 # schedule {{{1
-def test_schedule(config, nightly_config, nightly_manifest, mocker):
+def test_create_scheduler(config):
     balrog_auth = (None, None)
-    _, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
+    assert isinstance(
+        bscript.create_scheduler(api_root=config['api_root'], auth=balrog_auth),
+        ReleaseScheduler
+    )
+
+
+def test_schedule(config, mocker):
+    balrog_auth = (None, None)
 
     task = {
         'payload': {
@@ -141,6 +154,23 @@ def test_schedule(config, nightly_config, nightly_manifest, mocker):
 
     bscript.schedule(task, config, balrog_auth)
     assert real == expected
+
+
+# submit_toplevel {{{1
+def test_create_creator(config):
+    balrog_auth = (None, None)
+    assert isinstance(
+        bscript.create_creator(api_root=config['api_root'], auth=balrog_auth),
+        ReleaseCreatorV4
+    )
+
+
+def test_create_pusher(config):
+    balrog_auth = (None, None)
+    assert isinstance(
+        bscript.create_pusher(api_root=config['api_root'], auth=balrog_auth),
+        ReleasePusher
+    )
 
 
 # validate_task_schema {{{1

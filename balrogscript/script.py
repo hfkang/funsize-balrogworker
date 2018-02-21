@@ -118,9 +118,18 @@ def schedule(task, config, balrog_auth):
 
 
 # submit_toplevel {{{1
+def create_creator(**kwargs):
+    from balrog.submitter.cli import ReleaseCreatorV4
+    return ReleaseCreatorV4(**kwargs)
+
+
+def create_pusher(**kwargs):
+    from balrog.submitter.cli import ReleasePusher
+    return ReleasePusher(**kwargs)
+
+
 def submit_toplevel(task, config, balrog_auth):
     """Push a top-level release blob to balrog."""
-    from balrog.submitter.cli import ReleaseCreatorV4, ReleasePusher
     from util.retry import retry  # noqa: E402
     auth = balrog_auth
     partials = {}
@@ -134,14 +143,14 @@ def submit_toplevel(task, config, balrog_auth):
     # currently we create and set these manually.
     open_url = None
 
-    creator = ReleaseCreatorV4(
+    creator = create_creator(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
         # these are set for bz2, which we don't support.
         complete_mar_filename_pattern=None,
         complete_mar_bouncer_product_pattern=None,
     )
-    pusher = ReleasePusher(
+    pusher = create_pusher(
         api_root=config['api_root'], auth=auth,
         dummy=config['dummy'],
     )

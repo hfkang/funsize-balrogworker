@@ -121,9 +121,9 @@ def submit_toplevel(task, config, balrog_auth):
     auth = balrog_auth
     partials = {}
     if task['payload'].get('partial_updates'):
-    for v in task['payload']['partial_updates'].split(','):
-        version, build_number = v.split("build")
-        partials[version] = {"buildNumber": build_number}
+        for v in task['payload']['partial_updates'].split(','):
+            version, build_number = v.split("build")
+            partials[version] = {"buildNumber": build_number}
 
     # XXX WNP - support someday?
     # currently we create and set these manually.

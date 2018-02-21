@@ -92,12 +92,16 @@ def submit_locale(task, config, balrog_auth):
 
 
 # schedule {{{1
+def create_scheduler(**kwargs):
+    from balrog.submitter.cli import ReleaseScheduler
+    return ReleaseScheduler(**kwargs)
+
+
 def schedule(task, config, balrog_auth):
     """Schedule a release to ship on balrog channel(s)"""
-    from balrog.submitter.cli import ReleaseScheduler
     from util.retry import retry  # noqa: E402
     auth = balrog_auth
-    scheduler = ReleaseScheduler(api_root=config['api_root'], auth=auth,
+    scheduler = create_scheduler(api_root=config['api_root'], auth=auth,
                                  dummy=config['dummy'])
     args = [
         task['payload']['product'].capitalize(),

@@ -111,6 +111,38 @@ def test_submit_locale(config, nightly_config, nightly_manifest, mocker):
     bscript.submit_locale(task, config, balrog_auth)
 
 
+# schedule {{{1
+def test_schedule(config, nightly_config, nightly_manifest, mocker):
+    balrog_auth = (None, None)
+    _, release = bscript.create_locale_submitter(nightly_manifest[0], balrog_auth, config)
+
+    task = {
+        'payload': {
+            'product': 'foo',
+            'version': '99.bottles',
+            'build_number': 7,
+            'publish_rules': [1, 2],
+            'release_eta': None,
+        }
+    }
+    expected = ["Foo", '99.bottles', 7, [1, 2], None]
+    real = []
+
+    def fake_scheduler(*args):
+        # Don't assert here; retry() will retry
+        real.extend(args)
+
+    def fake_retry(c):
+        return c()
+
+    m = mock.MagicMock()
+    m.run = fake_scheduler
+    mocker.patch.object(bscript, "create_scheduler", return_value=m)
+
+    bscript.schedule(task, config, balrog_auth)
+    assert real == expected
+
+
 # validate_task_schema {{{1
 def test_validate_task_schema(config):
     test_taskdef = {

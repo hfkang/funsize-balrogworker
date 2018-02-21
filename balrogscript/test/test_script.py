@@ -173,6 +173,98 @@ def test_create_pusher(config):
     )
 
 
+@pytest.mark.parametrize("task,creator_expected,pusher_expected", ((
+    {
+        'payload': {
+            'app_version': '60.0',
+            'product': 'widget',
+            'version': '60',
+            'build_number': 8,
+            'channel_names': ['x', 'y'],
+            'archive_domain': 'archive',
+            'download_domain': 'download',
+            'platforms': ['foo', 'bar'],
+            'requires_mirrors': False,
+            'rules_to_update': [1],
+        }
+    },
+    {
+        'appVersion': '60.0',
+        'productName': 'Widget',
+        'version': '60',
+        'buildNumber': 8,
+        'updateChannels': ['x', 'y'],
+        'ftpServer': 'archive',
+        'bouncerServer': 'download',
+        'enUSPlatforms': ['foo', 'bar'],
+        'hashFunction': 'sha512',
+        'openURL': None,
+        'partialUpdates': {},
+        'requiresMirrors': False
+    },
+    {
+        'productName': 'Widget',
+        'version': '60',
+        'build_number': 8,
+        'rule_ids': [1],
+    },
+), (
+    {
+        'payload': {
+            'app_version': '60.0',
+            'product': 'widget',
+            'version': '60',
+            'build_number': 8,
+            'channel_names': ['x', 'y'],
+            'archive_domain': 'archive',
+            'download_domain': 'download',
+            'partial_updates': '40build2, 50build4',
+            'platforms': ['foo', 'bar'],
+            'requires_mirrors': True,
+            'rules_to_update': [1],
+        }
+    },
+    {
+        'appVersion': '60.0',
+        'productName': 'Widget',
+        'version': '60',
+        'buildNumber': 8,
+        'updateChannels': ['x', 'y'],
+        'ftpServer': 'archive',
+        'bouncerServer': 'download',
+        'enUSPlatforms': ['foo', 'bar'],
+        'hashFunction': 'sha512',
+        'openURL': None,
+        'partialUpdates': {
+            '40': {'buildNumber': '2'},
+            '50': {'buildNumber': '4'},
+        },
+        'requiresMirrors': True
+    },
+    {
+        'productName': 'Widget',
+        'version': '60',
+        'build_number': 8,
+        'rule_ids': [1],
+    },
+)))
+def test_submit_toplevel(task, creator_expected, pusher_expected, nightly_config, mocker):
+    balrog_auth = (None, None)
+    results = []
+
+    def fake(**kwargs):
+        results.append(kwargs)
+
+    m = mock.MagicMock()
+    m.run = fake
+
+    mocker.patch.object(bscript, "create_creator", return_value=m)
+    mocker.patch.object(bscript, "create_pusher", return_value=m)
+    bscript.submit_toplevel(task, nightly_config, balrog_auth)
+    assert results[0] == creator_expected
+    assert results[1] == pusher_expected
+
+
 # validate_task_schema {{{1
 def test_validate_task_schema(config):
     test_taskdef = {

@@ -108,7 +108,7 @@ def schedule(task, config, balrog_auth):
         task['payload']['version'],
         task['payload']['build_number'],
         task['payload']['publish_rules'],
-        task['payload']['release_eta'],
+        task['payload']['release_eta'] or None,  # Send None if release_eta is ''
     ]
     # XXX optionally append background_rate if/when we want to support it
 

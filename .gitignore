@@ -1,5 +1,6 @@
 my_Dockerfile
 .idea/*
+env/
 scriptworker/*
 .DS_Store
 .idea/

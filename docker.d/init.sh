@@ -44,10 +44,7 @@ fi
 
 mkdir -p -m 700 $CONFIG_DIR
 
-export INIT_WORKER=$(dirname $0)/init_worker.sh
-if [ -e $INIT_WORKER ]; then
-  source $INIT_WORKER
-fi
+source $(dirname $0)/init_worker.sh
 
 $CONFIG_LOADER --worker-id-prefix=$WORKER_ID_PREFIX $TEMPLATE_DIR/scriptworker.yml $CONFIG_DIR/scriptworker.json
 $CONFIG_LOADER $TEMPLATE_DIR/worker.yml $CONFIG_DIR/worker.json
@@ -55,4 +52,41 @@ $CONFIG_LOADER $TEMPLATE_DIR/worker.yml $CONFIG_DIR/worker.json
 echo $ED25519_PRIVKEY > $ED25519_PRIVKEY_PATH
 chmod 600 $ED25519_PRIVKEY_PATH
 
-exec $SCRIPTWORKER $CONFIG_DIR/scriptworker.json
+# == START: unset all of the variables to not potentially leak them ==
+unset API_ROOT
+unset ARTIFACTS_DIR
+unset ARTIFACT_UPLOAD_TIMEOUT
+unset AUTH0_AUDIENCE
+unset AUTH0_CLIENT_ID
+unset AUTH0_CLIENT_SECRET
+unset AUTH0_DOMAIN
+unset CONFIG_DIR
+unset CONFIG_LOADER
+unset COT_PRODUCT
+unset ED25519_PRIVKEY
+unset ED25519_PRIVKEY_PATH
+unset ENV
+unset GITHUB_OAUTH_TOKEN
+unset LOGS_DIR
+unset PROJECT_NAME
+unset PROVISIONER_ID
+unset SCRIPTWORKER
+unset SIGN_CHAIN_OF_TRUST
+unset TASKCLUSTER_ACCESS_TOKEN
+unset TASKCLUSTER_CLIENT_ID
+unset TASKCLUSTER_SCOPE_PREFIX
+unset TASK_CONFIG
+unset TASK_LOGS_DIR
+unset TASK_MAX_TIMEOUT
+unset TASK_SCRIPT
+unset TEMPLATE_DIR
+unset VERBOSE
+unset VERIFY_CHAIN_OF_TRUST
+unset VERIFY_COT_SIGNATURE
+unset WORKER_GROUP
+unset WORKER_ID_PREFIX
+unset WORKER_TYPE
+unset WORK_DIR
+# == END:   unset all of the variables to not potentially leak them ==
+
+exec /app/bin/scriptworker /app/configs/scriptworker.json

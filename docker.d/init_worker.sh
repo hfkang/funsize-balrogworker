@@ -2,6 +2,8 @@
 set -e
 
 # == START: this is what we need to configure ==
+test AUTH0_CLIENT_ID
+test AUTH0_CLIENT_SECRET
 # == END:   this is what we need to configure ==
 
 case $ENV in

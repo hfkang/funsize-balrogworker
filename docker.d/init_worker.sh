@@ -7,10 +7,10 @@ test $AUTH0_CLIENT_SECRET
 # == END:   this is what we need to configure ==
 
 case $ENV in
-  dev)
+  dev|fake-prod)
     export API_ROOT="https://admin-stage.balrog.nonprod.cloudops.mozgcp.net/api"
     ;;
-  fake-prod|prod)
+  prod)
     export API_ROOT="https://aus4-admin.mozilla.org/api"
     ;;
   *)
@@ -21,10 +21,10 @@ esac
 case $COT_PRODUCT in
   firefox)
     case $ENV in
-      dev)
+      dev|fake-prod)
         export AUTH0_AUDIENCE="balrog-cloudops-stage"
         ;;
-      fake-prod|prod)
+      prod)
         export AUTH0_AUDIENCE="balrog-production"
         ;;
       *)
@@ -35,10 +35,10 @@ case $COT_PRODUCT in
     ;;
   thunderbird)
     case $ENV in
-      dev)
+      dev|fake-prod)
         export AUTH0_AUDIENCE="balrog-stage"
         ;;
-      fake-prod|prod)
+      prod)
         export AUTH0_AUDIENCE="balrog-prod"
         ;;
       *)
